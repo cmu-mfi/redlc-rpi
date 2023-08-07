@@ -1,0 +1,31 @@
+<launch>
+
+    <arg name="randCurtains" default="false" />
+
+    <group ns="redversion">
+        <node name="lc_envelope" pkg="plc_robot" type="lc_envelope_hull_multi.py" output="screen">
+            <param name="randCurtains" value="$(arg randCurtains)"/>
+        </node>
+        
+        <!-- Node to look for intrusions -->
+        <node name="lc_monitor" pkg="plc_robot" type="lc_monitor.py" output="screen"/>
+        
+        <!-- Publish URDF for viz. -->
+        <param name="lcurtain_description" command="$(find xacro)/xacro
+        '$(find plc_robot)/config/lcurtain_multi.urdf.xacro' lc_id:='redversion'"/>
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="lc_state_publisher">
+            <remap from="robot_description" to="lcurtain_description"/>
+        </node>
+        
+        <include file="$(find ueye_cam)/launch/bayer_rggb_image_proc.launch"/>
+    </group>
+
+   <!-- For viz. of curtains on helper camera -->
+   <node pkg="tf" type="static_transform_publisher" name="red_lc_helper_tf2"
+     args="0.066352 -0.007833 0.01106 0.000384 0.006316 0.001334 0.999979 /redversion_ir_optical /red_camera2 100"/>
+   <node name="pc_overlay" pkg="lc_utils" type="pointcloud_overlay" output="screen"/>
+   <node name="throttle" pkg="topic_tools" type="throttle" args="messages /redversion/narrow_stereo/image_color 5 /redversion/narrow_stereo/image_color_throttle"/>
+
+   <!--<node name="control_signboard" pkg="lc_utils" type="control_signboard.py" output="screen"/>-->
+
+</launch>

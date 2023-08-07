@@ -1,0 +1,189 @@
+<launch>
+
+  <!-- Gazebo -->
+  <arg name="headless"    default="true" doc="Should the gazebo GUI be launched?" />
+  <arg name="world"       default="worlds/empty.world" doc="Filename to a SDF World for gazebo to use" />
+  <arg name="rviz"        default="true"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find plc_panda_control)/config/mfi.world" />
+    <arg name="gui" value="$(eval not arg('headless'))" />
+    <arg name="paused" value="true"/>
+    <arg name="use_sim_time" value="true"/>
+  </include>
+
+  <arg name="pipeline" default="ompl" />
+  <arg name="load_gripper" default="true" />
+  <arg name="transmission" default="effort" />
+
+  <arg name="arm_id1" value="panda1"/>
+  <arg name="arm_id2" value="panda2"/>
+  <arg name="arm_id3" value="panda3"/>
+  <arg name="arm_id4" value="panda4"/>
+
+  <!-- Panda1 Arm -->
+  <group ns="$(arg arm_id1)">
+    <include file="$(find franka_gazebo)/launch/panda_single.launch">
+      <arg name="use_gripper" default="$(arg load_gripper)" />
+      <arg name="controller" default="$(arg transmission)_joint_trajectory_controller" />
+      <arg name="x" value="-1"/>
+      <arg name="y" value="-1.2"/>
+      <arg name="arm_id" value="$(arg arm_id1)"/>
+    </include>
+
+    <include file="$(find plc_panda_control)/launch/arm_control.launch" pass_all_args="true">
+      <arg name="load_robot_description" value="false"/>
+      <arg name="moveit_controller_manager" value="simple"/>
+      <arg name="arm_id" value="$(arg arm_id1)"/>
+      <arg name="use_rviz" value="false"/>
+    </include>
+
+    <node name="throttle" pkg="topic_tools" type="throttle" args="messages franka_state_controller/joint_states 10 franka_state_controller/joint_states_slow"/>
+    <node name="arm_positions" pkg="plc_panda_control" type="arm_positions.py" output="screen">
+      <param name="arm_id" value="$(arg arm_id1)"/>
+    </node>
+  </group>
+
+  <!-- Panda2 Arm -->
+  <group ns="$(arg arm_id2)">
+    <include file="$(find franka_gazebo)/launch/panda_single.launch">
+      <arg name="use_gripper" default="$(arg load_gripper)" />
+      <arg name="controller" default="$(arg transmission)_joint_trajectory_controller" />
+      <arg name="x" value="-1"/>
+      <arg name="y" value="1.2"/>
+      <arg name="arm_id" value="$(arg arm_id2)"/>
+    </include>
+
+    <include file="$(find plc_panda_control)/launch/arm_control.launch" pass_all_args="true">
+      <arg name="load_robot_description" value="false" />
+      <arg name="moveit_controller_manager" value="simple"/>
+      <arg name="arm_id" value="$(arg arm_id2)"/>
+      <arg name="use_rviz" value="false"/>
+    </include>
+
+    <node name="throttle" pkg="topic_tools" type="throttle" args="messages franka_state_controller/joint_states 10 franka_state_controller/joint_states_slow"/>
+    <node name="arm_positions" pkg="plc_panda_control" type="arm_positions.py" output="screen">
+      <param name="arm_id" value="$(arg arm_id2)"/>
+    </node>
+  </group>
+
+    <!-- Panda3 Arm -->
+  <group ns="$(arg arm_id3)">
+    <include file="$(find franka_gazebo)/launch/panda_single.launch">
+      <arg name="use_gripper" default="$(arg load_gripper)" />
+      <arg name="controller" default="$(arg transmission)_joint_trajectory_controller" />
+      <arg name="x" value="1"/>
+      <arg name="y" value="0.8"/>
+      <arg name="arm_id" value="$(arg arm_id3)"/>
+    </include>
+
+    <include file="$(find plc_panda_control)/launch/arm_control.launch" pass_all_args="true">
+      <arg name="load_robot_description" value="false" />
+      <arg name="moveit_controller_manager" value="simple"/>
+      <arg name="arm_id" value="$(arg arm_id3)"/>
+      <arg name="use_rviz" value="false"/>
+    </include>
+
+    <node name="throttle" pkg="topic_tools" type="throttle" args="messages franka_state_controller/joint_states 10 franka_state_controller/joint_states_slow"/>
+    <node name="arm_positions" pkg="plc_panda_control" type="arm_positions.py" output="screen">
+      <param name="arm_id" value="$(arg arm_id3)"/>
+    </node>
+  </group>
+
+  <!-- Panda4 Arm -->
+  <group ns="$(arg arm_id4)">
+    <include file="$(find franka_gazebo)/launch/panda_single.launch">
+      <arg name="use_gripper" default="$(arg load_gripper)" />
+      <arg name="controller" default="$(arg transmission)_joint_trajectory_controller" />
+      <arg name="x" value="1"/>
+      <arg name="y" value="-0.8"/>
+      <arg name="arm_id" value="$(arg arm_id4)"/>
+    </include>
+
+    <include file="$(find plc_panda_control)/launch/arm_control.launch" pass_all_args="true">
+      <arg name="load_robot_description" value="false" />
+      <arg name="moveit_controller_manager" value="simple"/>
+      <arg name="arm_id" value="$(arg arm_id4)"/>
+      <arg name="use_rviz" value="false"/>
+    </include>
+
+    <node name="throttle" pkg="topic_tools" type="throttle" args="messages franka_state_controller/joint_states 10 franka_state_controller/joint_states_slow"/>
+    <node name="arm_positions" pkg="plc_panda_control" type="arm_positions.py" output="screen">
+      <param name="arm_id" value="$(arg arm_id4)"/>
+    </node>
+  </group>
+
+  <arg name="lc1_id" value="blueversion"/>
+  <arg name="lc2_id" value="redversion"/>
+  <arg name="lc3_id" value="greenversion"/>
+  <arg name="lc4_id" value="yellowversion"/>
+
+  <arg name="lc1_xyz" value="6 0 2"/>
+  <arg name="lc1_rpy" value="0 0.4 3.14"/>
+
+  <!-- Light Curtain 1-->
+  <group ns="$(arg lc1_id)">
+    <param name="lcurtain_description" command="$(find xacro)/xacro
+      '$(find plc_panda_control)/config/lcurtain_multi.urdf.xacro'
+      xyz:='$(arg lc1_xyz)'
+      rpy:='$(arg lc1_rpy)'
+      lc_id:='$(arg lc1_id)'" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_lcurtain" args="-urdf -param lcurtain_description -model $(arg lc1_id)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="lc_state_publisher">
+      <remap from="robot_description" to="lcurtain_description"/>
+    </node>
+  </group>
+
+  <arg name="lc2_xyz" value="-6 0 2"/>
+  <arg name="lc2_rpy" value="0 0.4 0"/>
+
+  <!-- Light Curtain 2 -->
+  <group ns="$(arg lc2_id)">
+    <param name="lcurtain_description" command="$(find xacro)/xacro
+      '$(find plc_panda_control)/config/lcurtain_multi.urdf.xacro'
+      xyz:='$(arg lc2_xyz)'
+      rpy:='$(arg lc2_rpy)'
+      lc_id:='$(arg lc2_id)'" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_lcurtain" args="-urdf -param lcurtain_description -model $(arg lc2_id)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="lc_state_publisher">
+      <remap from="robot_description" to="lcurtain_description"/>
+    </node>
+  </group>
+
+  <arg name="lc3_xyz" value="0 6 2"/>
+  <arg name="lc3_rpy" value="0 0.4 -1.57"/>
+
+  <!-- Light Curtain 3 -->
+  <group ns="$(arg lc3_id)">
+    <param name="lcurtain_description" command="$(find xacro)/xacro
+      '$(find plc_panda_control)/config/lcurtain_multi.urdf.xacro'
+      xyz:='$(arg lc3_xyz)'
+      rpy:='$(arg lc3_rpy)'
+      lc_id:='$(arg lc3_id)'" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_lcurtain" args="-urdf -param lcurtain_description -model $(arg lc3_id)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="lc_state_publisher">
+      <remap from="robot_description" to="lcurtain_description"/>
+    </node>
+  </group>
+
+  <arg name="lc4_xyz" value="0 -6 2"/>
+  <arg name="lc4_rpy" value="0 0.4 1.57"/>
+
+  <!-- Light Curtain 4 -->
+  <group ns="$(arg lc4_id)">
+    <param name="lcurtain_description" command="$(find xacro)/xacro
+      '$(find plc_panda_control)/config/lcurtain_multi.urdf.xacro'
+      xyz:='$(arg lc4_xyz)'
+      rpy:='$(arg lc4_rpy)'
+      lc_id:='$(arg lc4_id)'" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_lcurtain" args="-urdf -param lcurtain_description -model $(arg lc4_id)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="lc_state_publisher">
+      <remap from="robot_description" to="lcurtain_description"/>
+    </node>
+  </group>
+
+  <!-- RViz -->
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
+    args="-d $(find plc_panda_control)/launch/panda_multi.rviz"/>
+
+</launch>

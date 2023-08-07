@@ -1,0 +1,17 @@
+<launch>
+
+    <arg name="x" value="1.85"/>
+    <arg name="y" value="0.7"/>
+    <arg name="z" value="0.0"/>
+    <arg name="yaw" value="2.0"/>
+    <arg name="pitch" value="0"/>
+    <arg name="roll" value="-1.57"/>
+
+    <group ns="lc1">
+        <node name="lc_envelope" pkg="lc_wrapper" type="lc_envelope_hull.py" output="screen"/>
+    </group>
+
+    <node pkg="tf" type="static_transform_publisher" name="static_transform_publisher"
+      args="$(arg x) $(arg y) $(arg z) $(arg yaw) $(arg pitch) $(arg roll) world redversion_ir_optical 10" />
+
+</launch>

@@ -1,0 +1,83 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rgbd_camera_xml">
+
+  <link name="rgbd_camera">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+
+
+  <gazebo reference="rgbd_camera">
+    <sensor type="depth" name="rgbd_camera">
+      <update_rate>1000.0</update_rate>
+      <camera name="head">
+        <!-- <horizontal_fov>2.0</horizontal_fov> -->
+        <image>
+          <width>512</width>
+          <height>640</height>
+          <format>L8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>30.0</far>
+        </clip>
+        <lens>
+          <intrinsics>
+            <fx>423.4358</fx>
+            <fy>423.4358</fy>
+            <cx>251.5836</cx>
+            <cy>325.38754</cy>
+            <s>0</s>
+          </intrinsics>
+        </lens>
+        <distortion>
+            <k1>0.0</k1>
+            <k2>0.0</k2>
+            <k3>0.0</k3>
+            <p1>0.0</p1>
+            <p2>0.0</p2>
+            <center>0.5 0.5</center>
+          </distortion>
+      </camera>
+      <plugin name="rgbd_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+        <alwaysOn>true</alwaysOn>
+        <baseline>0.2</baseline>
+        <cameraName>rgbd_camera</cameraName>
+        <imageTopicName>/rgbd_camera/color/image</imageTopicName>
+        <cameraInfoTopicName>/rgbd_camera/color/camera_info</cameraInfoTopicName>
+        <depthImageTopicName>/rgbd_camera/depth/image</depthImageTopicName>
+        <depthImageCameraInfoTopicName>/rgbd_camera/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudTopicName>/rgbd_camera/depth/points</pointCloudTopicName>
+        <frameName>rgbd_camera</frameName>
+        <pointCloudCutoff>0.1</pointCloudCutoff>
+        <pointCloudCutoffMax>30.0</pointCloudCutoffMax>
+        <distortionK1>0</distortionK1>
+        <distortionK2>0</distortionK2>
+        <distortionK3>0</distortionK3>
+        <distortionT1>0</distortionT1>
+        <distortionT2>0</distortionT2>
+        <focalLength>423.4358</focalLength>
+        <Cx>251.5836</Cx>
+        <Cy>325.38754</Cy>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

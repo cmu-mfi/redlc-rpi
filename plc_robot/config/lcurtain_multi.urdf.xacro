@@ -1,0 +1,110 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lcurtain">
+
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+
+  <material name="red">
+    <color rgba="0.8 0 0 1"/>
+  </material>
+
+  <material name="green">
+    <color rgba="0 0.8 0 1"/>
+  </material>
+
+  <material name="yellow">
+    <color rgba="0.8 0.8 0 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1"/>
+  </material>
+
+  <xacro:arg name="lc_id" default="blueversion"/>
+  <!-- for condition evaluation -->
+  <xacro:property name="lc_id" value="$(arg lc_id)"/>
+
+  <xacro:if value="${lc_id == 'blueversion'}">
+    <link name="$(arg lc_id)_base_link">
+      <visual>
+        <geometry>
+          <box size="0.2 0.2 0.05"/>
+        </geometry>
+        <material name="blue"/>
+      </visual>
+      <inertial>
+        <mass value="1"/>
+        <origin xyz = "0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/> 
+      </inertial>
+    </link>
+    <gazebo reference="$(arg lc_id)_base_link">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+  </xacro:if>
+
+  <xacro:if value="${lc_id == 'redversion'}">
+    <link name="$(arg lc_id)_base_link">
+      <visual>
+        <geometry>
+          <box size="0.2 0.2 0.05"/>
+        </geometry>
+        <material name="red"/>
+      </visual>
+      <inertial>
+        <mass value="1"/>
+        <origin xyz = "0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+      </inertial>
+    </link>
+    <gazebo reference="$(arg lc_id)_base_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+  </xacro:if>
+
+  <xacro:if value="${lc_id == 'greenversion'}">
+    <link name="$(arg lc_id)_base_link">
+      <visual>
+        <geometry>
+          <box size="0.2 0.2 0.05"/>
+        </geometry>
+        <material name="green"/>
+      </visual>
+      <inertial>
+        <mass value="1"/>
+        <origin xyz = "0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/> 
+      </inertial>
+    </link>
+    <gazebo reference="$(arg lc_id)_base_link">
+      <material>Gazebo/Green</material>
+    </gazebo>
+  </xacro:if>
+
+  <xacro:if value="${lc_id == 'yellowversion'}">
+    <link name="$(arg lc_id)_base_link">
+      <visual>
+        <geometry>
+          <box size="0.2 0.2 0.05"/>
+        </geometry>
+        <material name="yellow"/>
+      </visual>
+      <inertial>
+        <mass value="1"/>
+        <origin xyz = "0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/> 
+      </inertial>
+    </link>
+    <gazebo reference="$(arg lc_id)_base_link">
+      <material>Gazebo/Yellow</material>
+    </gazebo>
+  </xacro:if>
+
+  <link name="$(arg lc_id)_ir_optical"/>
+  <joint name="$(arg lc_id)_ir_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="1.57 0 0"/>
+    <parent link="$(arg lc_id)_ir_optical"/>
+    <child link="$(arg lc_id)_base_link"/>
+  </joint>
+
+</robot>

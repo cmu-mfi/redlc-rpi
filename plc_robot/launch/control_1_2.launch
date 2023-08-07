@@ -1,0 +1,25 @@
+<launch>
+
+    <arg name="use_depth" default="false" />
+    <arg name="randCurtains" default="false" />
+
+    <group ns="blueversion">
+        <node name="lc_envelope" pkg="plc_panda_control" type="lc_envelope_hull.py" output="screen" unless="$(arg use_depth)">
+            <param name="randCurtains" value="$(arg randCurtains)"/>
+        </node>
+        <node name="lc_envelope" pkg="plc_panda_control" type="lc_envelope.py" output="screen" if="$(arg use_depth)"/>
+        <node name="throttle" pkg="topic_tools" type="throttle" args="messages rgbd_camera/depth/image 10 rgbd_camera/depth/image_slow" if="$(arg use_depth)"/>
+    </group>
+
+    <group ns="redversion">
+        <node name="lc_envelope" pkg="plc_panda_control" type="lc_envelope_hull.py" output="screen">
+            <param name="randCurtains" value="$(arg randCurtains)"/>
+        </node>
+    </group>
+
+    <group ns="panda1">
+        <node name="arm_random_motion" pkg="plc_panda_control" type="arm_random_motion.py" output="screen">
+            <param name="arm_id" value="panda1"/>
+        </node>
+    </group>
+</launch>

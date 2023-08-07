@@ -1,0 +1,43 @@
+<launch>
+
+<!--
+    <arg name="x" value="2.92"/>
+    <arg name="y" value="2.54"/>
+    <arg name="z" value="3.55"/>
+    <arg name="yaw" value="2.5"/>
+    <arg name="pitch" value="0.0"/>
+    <arg name="roll" value="-2.5"/>
+-->
+
+    <arg name="x" value="2.9429188915977154"/>
+    <arg name="y" value="2.5537794344175917"/>
+    <arg name="z" value="2.8271553200444415"/>
+    <arg name="yaw" value="2.5"/>
+    <arg name="pitch" value="0.0"/>
+    <arg name="roll" value="-2.5"/>
+
+    <arg name="qw" value="0.15173116219353297"/>
+    <arg name="qx" value="-0.2749591548230583"/>
+    <arg name="qy" value="-0.8708277543781353"/>
+    <arg name="qz" value="0.3781985454799151"/>
+
+
+    <arg name="randCurtains" default="false" />
+
+    <group ns="redversion">
+        <node name="lc_envelope" pkg="plc_robot" type="lc_envelope_hull.py" output="screen">
+            <param name="randCurtains" value="$(arg randCurtains)"/>
+        </node>
+    </group>
+
+    <!--<node pkg="tf" type="static_transform_publisher" name="static_transform_publisher"
+      args="$(arg x) $(arg y) $(arg z) $(arg qx) $(arg qy) $(arg qz) $(arg qw) base_link redversion_ir_optical 10" />-->
+
+    <include file="$(find ueye_cam)/launch/bayer_rggb_image_proc.launch"/>
+
+    <node name="pc_overlay" pkg="lc_utils" type="pointcloud_overlay" output="screen"/>
+
+    <!--<node pkg="tf" type="static_transform_publisher" name="light_curtain_helper_tf_broadcaster"
+    args="0.066352 -0.007833  0.011068 0.000384 0.006316 0.001334 0.999979 /redversion_ir_optical /camera 100" />-->
+
+</launch>

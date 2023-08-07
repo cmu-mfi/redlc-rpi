@@ -1,0 +1,42 @@
+<launch>
+    <arg name="use_sim" default="true" />
+    <arg name="depth_pub_rate" default="30" />
+    <arg name="laser_power" default="50" />
+    <arg name="policy" default="track" />
+    <arg name="min_range" default="1" />
+    <arg name="max_range" default="7" />
+
+    <group ns="panda1">
+        <node name="arm_random_motion" pkg="plc_panda_control" type="arm_random_motion.py" output="screen">
+            <param name="arm_id" value="panda1"/>
+        </node>
+    </group>
+
+    <group ns="panda2">
+        <node name="arm_random_motion" pkg="plc_panda_control" type="arm_random_motion.py" output="screen">
+            <param name="arm_id" value="panda2"/>
+        </node>
+    </group>
+
+    <group ns="panda3">
+        <node name="arm_random_motion" pkg="plc_panda_control" type="arm_random_motion.py" output="screen">
+            <param name="arm_id" value="panda3"/>
+        </node>
+    </group>
+
+    <group ns="panda4">
+        <node name="arm_random_motion" pkg="plc_panda_control" type="arm_random_motion.py" output="screen">
+            <param name="arm_id" value="panda4"/>
+        </node>
+    </group>
+
+    <group ns="blueversion">
+        <node name="lc_envelope" pkg="plc_panda_control" type="lc_envelope_hull_multi.py" output="screen">
+        </node>
+    </group>
+
+    <group ns="redversion">
+        <node name="lc_envelope" pkg="plc_panda_control" type="lc_envelope_hull_multi.py" output="screen">
+        </node>
+    </group>
+</launch>
