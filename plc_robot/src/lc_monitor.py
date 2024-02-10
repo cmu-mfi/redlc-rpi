@@ -8,6 +8,8 @@ from cv_bridge import CvBridge
 import numpy as np
 import time
 
+from std_msgs.msg import Header
+
 bridge = CvBridge()
 disabled = False
 startup = True
@@ -16,6 +18,8 @@ mask = None
 
 roi = np.array([[220, 290], [350, 230], [430, 330], [290, 390]])
 roi_pub = rospy.Publisher("/redversion/roi_detection", Image, queue_size=1)
+
+event_rec_pub = rospy.Publisher('event_rec', Header, queue_size=10)
 
 def enable_robot_service(ns):
     try:
@@ -35,6 +39,12 @@ def roi_img_publish(roi):
     global roi_pub
     roi_pub.publish(bridge.cv2_to_imgmsg(roi))
 
+def publish_event(event_name):
+    msg = Header()
+    msg.stamp = rospy.Time.now()
+    msg.frame_id = event_name
+    event_rec_pub.publish(msg)
+
 def ir_img_callback(msg):
     #start = time.time()
     global disabled, startup, ref_img, mask, roi
@@ -51,17 +61,19 @@ def ir_img_callback(msg):
     roi_img_publish(roi_diff)
     if(np.max(roi_diff) > 120):
         rospy.logwarn('CURTAIN INTRUSION!')
+        publish_event("Intrusion Detected")
         if not disabled:
             #rstart = time.time()
-            disable_robot_service("architect")
+            disable_robot_service("yk_architect")
             #relapsed = time.time() - rstart
             #print(f"Robot stop takes: {relapsed:.6f}")
-            disable_robot_service("developer")
+            disable_robot_service("yk_destroyer")
             disabled = True
+            publish_event("Command STOP Robots")
     else:
         if disabled:
-            enable_robot_service("architect")
-            enable_robot_service("developer")
+            enable_robot_service("yk_architect")
+            enable_robot_service("yk_destroyer")
             disabled = False
 
     #elapsed = time.time() - start
